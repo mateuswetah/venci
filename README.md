@@ -22,14 +22,18 @@ EN:
     Requires ncurses library for C.
 
 -----
-Instructions of use:
+
 
 PT-BR:
+Instruções de uso:
 
     As instruções do uso do VENCI podem ser encontradas no arquivo help.txt. 
     As mesmas podem ser acessadas pelo help do aplicativo, com o comando :h .
 
+
 EN:
+
+Instructions of use:
 
     The instructions of use of the VENCI can be found on the help.txt file.
     The same can be acessible by the applicative's help, with the command :h .
