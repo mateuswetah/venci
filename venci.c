@@ -9,12 +9,13 @@ void ajuda();
 int quit = 0;
 
 int main(){ 
-  char c;
-	char splash[4][50]={"BEM AO VENCI!",
-					"An Epic Epic of Epicness Text Editor",
-					"Aperte ESC para acessar o menu",
-					"Utilize o comando :h para ajuda..."
-					};
+	
+  	char c;
+	char splash[4][50]={	"BEM VINDO AO VENCI!",
+				"An Epic Epic of Epicness Text Editor",
+				"Aperte ESC para acessar o menu",
+				"Utilize o comando :h para ajuda..."
+			};
 
 	initscr();
 	cbreak();
