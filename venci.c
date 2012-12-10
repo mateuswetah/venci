@@ -1,7 +1,8 @@
 #include <ncurses.h>
 #include <string.h>
 
-void menu(WINDOW *win);
+
+void menu(WINDOW *win);  
 void salvar();
 void abrir();
 void novo_arquivo();
@@ -21,6 +22,8 @@ int main(){
 	cbreak();
 	noecho();
 	
+	//Mostra a splash screen
+	//Quando for implementada a janela de edição irá para uma função separada.
 	attron(A_BOLD);
 	mvprintw((LINES/2)-2, (COLS-strlen(splash[0]))/2,"%s",splash[0]);
 	attroff(A_BOLD);
@@ -43,8 +46,10 @@ int main(){
 		return 0;
 	}
 	
+	//Loop principal
 	while((c = getch())){
 		if(c == 27){
+			//Se for apertado ESC vai para o menu
 			menu(win);
 			if(quit == 1){
 				break;
@@ -62,6 +67,7 @@ int main(){
 
 void menu(WINDOW *win){
 	
+	//Alterna a janela para o MENU
 	char option[6];
 	werase(win);
 	mvwaddstr(win, 0, 0, "-------------------------MODO-MENU----------------------------------------------\n");
@@ -88,7 +94,8 @@ void menu(WINDOW *win){
 	}else{
 		wprintw(win,"Comando inválido");
 	}
-
+	
+	//Volta para o modo INSERIR
 	mvwaddstr(win, 0, 0,"--------------------------INSERIR-----------------------------------------------\n");
 	wrefresh(win);
 	
