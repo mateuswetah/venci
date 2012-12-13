@@ -1,4 +1,5 @@
 #include <ncurses.h>
+
 void novo(WINDOW *edit, WINDOW *bar){
 	
 	// Limpa a tela
@@ -6,10 +7,13 @@ void novo(WINDOW *edit, WINDOW *bar){
 	wrefresh(edit);
 	
 }
+
 void salvar(){}
 void abrir(){}
 void salvar_como(){}
-void ajuda(WINDOW *menu, WINDOW *bar) {
+
+
+void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	
 	int i, j;
 	
@@ -19,24 +23,44 @@ void ajuda(WINDOW *menu, WINDOW *bar) {
 	
 	// Imprime a ajuda
 	box(menu, 0, '\0');	
-	for (i = 1; i < 19; i++) {
+	
+	//Pra que serve esse for?? , Leonardo
+	for (i = 1; i < 13; i++) {
 		for (j = 1; j < 29; j++) {
 			mvwaddch(menu, i, j, ' ');
 		}
-	}	
+	}
+	
 	mvwprintw(menu, 1, 2, "Ajuda");
-	mvwprintw(menu, 3, 2, "Adhoc");
+	mvwprintw(menu, 3, 2, "Bem vindo ao VENCI!");
+	mvwprintw(menu, 4, 2, "Para acessar o menu,");
+	mvwprintw(menu, 5, 2, "basta apertar a tleca ESC.");
+	mvwprintw(menu, 6, 2, "Navegue entre as opcoes");
+	mvwprintw(menu, 7, 2, "com as setinhas para cima");
+	mvwprintw(menu, 8, 2, "e para baixo. Aperte ENTER");
+	mvwprintw(menu, 9, 2, "quando tiver escolhido.");
+	mvwprintw(menu, 10, 2, "Para voltar a janela de");
+	mvwprintw(menu, 11, 2, "edicao, aperte ESC.");
 	
 	// Organiza a barra
-	werase(bar);
-	wrefresh(bar);
-	mvwprintw(bar, 1, 0, "Pressione qualquer tecla para voltar ao editor.");
+	//werase(bar);
+	//wrefresh(bar);
+	mvwprintw(bar, 1, 0, "Pressione qualquer tecla para voltar ao editor, ou ESC para voltar ao menu.");
 	
 	// Exibe a ajuda
 	wrefresh(bar);
 	wrefresh(menu);
 	
-	getch();
+	//getch();
+	if (getch() == 27){ // ESC para voltar ao menu sem passar pela edit
+	
+		werase(menu);
+		wrefresh(menu);
+		werase(bar);
+		wrefresh(bar);
+		
+		show_menu(menu, bar, edit);
+	}
 				
 	werase(bar);
 	wrefresh(bar);
@@ -55,13 +79,13 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	box(menu, 0, '\0');
 	
 	// Imprime o menu
-	mvwprintw(menu, 2, 12, "VENCI");
-	mvwprintw(menu, 4,5,"novo");
-	mvwprintw(menu, 5,5,"abrir");
-	mvwprintw(menu, 6,5,"salvar");
-	mvwprintw(menu, 7,5,"salvar como");
-	mvwprintw(menu, 8,5,"ajuda");
-	mvwprintw(menu, 9,5,"sair");
+	mvwprintw(menu, 0, 12, "VENCI");
+	mvwprintw(menu, 4, 5, "novo");
+	mvwprintw(menu, 5, 5, "abrir");
+	mvwprintw(menu, 6, 5, "salvar");
+	mvwprintw(menu, 7, 5, "salvar como");
+	mvwprintw(menu, 8, 5, "ajuda");
+	mvwprintw(menu, 10, 5, "sair");
 	mvwaddch(menu, pos, 3, '>');
 	
 	wrefresh(menu);
@@ -73,14 +97,20 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		if (ch == KEY_DOWN){
 			if (pos >=4 && pos <=8){
 				pos++;
-			}else if (pos == 9){
+				if (pos == 9) {
+					pos++;
+				}		
+			}else if (pos == 10){
 				pos = 4;
 			}
 		}else if (ch == KEY_UP){
-			if (pos >=5 && pos <=9){
+			if (pos >=5 && pos <=10){
 				pos--;
+				if (pos == 9) {
+					pos--;
+				}
 			}else if (pos == 4){
-				pos = 9;
+				pos = 10;
 			}
 		}else if (ch == 10){ // ENTER para escolher opção
 			break;
@@ -109,9 +139,9 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		case 7: salvar_como();
 			mvwprintw(bar, 1, 0, "Função salvar como não implementada");
 			break;	
-		case 8: ajuda(menu, bar);
+		case 8: ajuda(menu, bar,edit);
 			break;
-		case 9:
+		case 10:
 			return 1;
 			break;
 	}
@@ -133,7 +163,7 @@ int main() {
 	WINDOW *edit;
 	WINDOW *bar;
 		
-	menu = newwin(20, 30, (LINES/2)-10, (COLS/2)-15);
+	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15);
 	edit = newwin(LINES-2, COLS, 0, 0);
 	bar = newwin(2, COLS, LINES-2, 0);
 	
