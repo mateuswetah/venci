@@ -24,7 +24,6 @@ void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	// Imprime a ajuda
 	box(menu, 0, '\0');	
 	
-	//Pra que serve esse for?? , Leonardo
 	for (i = 1; i < 13; i++) {
 		for (j = 1; j < 29; j++) {
 			mvwaddch(menu, i, j, ' ');
