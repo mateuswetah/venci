@@ -1,11 +1,74 @@
 #include <ncurses.h>
 
+//Protótipos de função
+void novo(WINDOW *edit, WINDOW *bar);
+void salvar();
+void abrir();
+void salvar_como();
+void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit);
+int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit);
+
+int main() {
+	
+	// Inicia a ncurses
+	initscr();
+	noecho();
+	cbreak();
+
+	// Cria as  janelas
+	WINDOW *menu;
+	WINDOW *edit;
+	WINDOW *bar;
+		
+	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15);
+	edit = newwin(LINES-2, COLS, 0, 0);
+	bar = newwin(2, COLS, LINES-2, 0);
+	
+	// Habilita teclas especiais
+	keypad(stdscr, TRUE);
+	keypad(menu, TRUE);
+
+	// Refresh para plotar todas as janelas
+	refresh();
+	
+	// Inicializa as variáveis da main
+	short init = 0;
+	char ch;	
+	
+	// Loop principal
+	while (1) {
+		if (ch == 27 || init == 0) { // ESC ou primeira execução do loop para exebir o menu
+			if(show_menu(menu, bar, edit) == 1){
+				break;
+			}
+		
+			init = 1;
+			
+			werase(menu);
+			wrefresh(menu);
+			
+			wrefresh(edit);
+			wmove(edit, 0, 0);
+		}
+		
+		ch = getch();
+		
+		if (ch != 27) {
+			waddch(edit, ch);
+			wrefresh(edit);
+		}
+		
+	}
+
+	endwin();
+		 
+	return 0;
+}
 void novo(WINDOW *edit, WINDOW *bar){
 	
 	// Limpa a tela
 	werase(edit);
 	wrefresh(edit);
-	
 }
 
 void salvar(){}
@@ -59,11 +122,10 @@ void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		wrefresh(bar);
 		
 		show_menu(menu, bar, edit);
+	}else{			
+		werase(bar);
+		wrefresh(bar);
 	}
-				
-	werase(bar);
-	wrefresh(bar);
-
 }
 
 int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
@@ -150,59 +212,3 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	return 0;
 }
 
-int main() {
-	
-	// Inicia a ncurses
-	initscr();
-	noecho();
-	cbreak();
-
-	// Cria as  janelas
-	WINDOW *menu;
-	WINDOW *edit;
-	WINDOW *bar;
-		
-	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15);
-	edit = newwin(LINES-2, COLS, 0, 0);
-	bar = newwin(2, COLS, LINES-2, 0);
-	
-	// Habilita teclas especiais
-	keypad(stdscr, TRUE);
-	keypad(menu, TRUE);
-
-	// Refresh para plotar todas as janelas
-	refresh();
-	
-	// Inicializa as variáveis da main
-	short init = 0;
-	char ch;	
-	
-	// Loop principal
-	while (1) {
-		if (ch == 27 || init == 0) { // ESC ou primeira execução do loop para exebir o menu
-			if(show_menu(menu, bar, edit) == 1){
-				break;
-			}
-		
-			init = 1;
-			
-			werase(menu);
-			wrefresh(menu);
-			
-			wrefresh(edit);
-			wmove(edit, 0, 0);
-		}
-		
-		ch = getch();
-		
-		if (ch != 27) {
-			waddch(edit, ch);
-			wrefresh(edit);
-		}
-		
-	}
-
-	endwin();
-		 
-	return 0;
-}
