@@ -1,3 +1,10 @@
+/**
+ * VENCI - https://github.com/mateuswetah/venci
+ * Alunos: Eduardo Faria de Souza,
+ *         Leonardo Vieira Pacheco,
+ *         Mateus Machado Luna
+ */
+
 #include <ncurses.h>
 
 //Protótipos de função
