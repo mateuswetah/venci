@@ -96,7 +96,7 @@ void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	mvwprintw(menu, 1, 2, "Ajuda");
 	mvwprintw(menu, 3, 2, "Bem vindo ao VENCI!");
 	mvwprintw(menu, 4, 2, "Para acessar o menu,");
-	mvwprintw(menu, 5, 2, "basta apertar a tleca ESC.");
+	mvwprintw(menu, 5, 2, "basta apertar a tecla ESC.");
 	mvwprintw(menu, 6, 2, "Navegue entre as opcoes");
 	mvwprintw(menu, 7, 2, "com as setinhas para cima");
 	mvwprintw(menu, 8, 2, "e para baixo. Aperte ENTER");
