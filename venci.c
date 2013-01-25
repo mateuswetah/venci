@@ -17,22 +17,22 @@ void salvar_como(WINDOW *edit, WINDOW *bar);
 void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit);
 int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit);
 
-//Cria os painéis
+// Cria os painéis
 PANEL *popup;
 PANEL *editor;
 PANEL *infobar;
 
-//Algumas variáveis globais
+// Algumas variáveis globais
 FILE *text;
-char nome[30]; // Nome do arquivo
-int count = 0; // Registra se é a primeira vez que um documento é aberto.
+char nome[30]; //Nome do arquivo, fornecido pelo usuário.
+int count = 0; //Registra se é a primeira vez que um documento é aberto.
 
 int main() {
 	
 	// Inicia a ncurses
 	initscr();
-	noecho();
-	cbreak();
+	noecho(); //Não exibir os caractéres digitados como é feito no terminal
+	cbreak(); //Permite a leitura imediata, caractére à caractére
 	start_color();
 
 	// Cria as  janelas
@@ -40,17 +40,18 @@ int main() {
 	WINDOW *edit;
 	WINDOW *bar;
 		
-	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15);
+	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15); //Centralizado!
 	edit = newwin(LINES-2, COLS, 0, 0);
 	bar = newwin(2, COLS, LINES-2, 0);
 	
-	//Associa os painéis às respectivas janelas
+	// Associa os painéis às suas respectivas janelas
 	editor = new_panel(edit);
 	infobar = new_panel(bar);
 	popup = new_panel(menu);
 
-	//Atributos
+	// Atributos de cor
 	init_pair(1, COLOR_CYAN, COLOR_BLACK);
+	
 	wattrset(bar, COLOR_PAIR(1));
 	wattrset(menu, COLOR_PAIR(1));
 	
@@ -60,20 +61,19 @@ int main() {
 
 	// Refresh para plotar todas as janelas
 	refresh();
-	update_panels();
-	doupdate();	
 	
-	// Inicializa as variáveis da main
+	// Inicializa as variáveis da main e associa valores
 	char ch = 27;	
 	strcpy (nome, "novo_arquivo");
 	
 	// Loop principal
 	while (1) {
-		if (ch == 27) { // ESC para exebir o menu
+		if (ch == 27) { //ESC para exibir o menu
 			if(show_menu(menu, bar, edit) == 1){
 				break;
 			}
 			
+			// Reorganização de painés, da janela e do cursor.
 			hide_panel(popup);
 			update_panels();
 			doupdate();
@@ -82,9 +82,9 @@ int main() {
 			wmove(edit, 0, 0);
 		}
 		
-		ch = getch();
+		ch = getch(); //Aqui a mágica ocorre.
 		
-		if (ch != 27) {
+		if (ch != 27) { //Não sendo ESC, exibe o caractére e atualiza a tela
 			waddch(edit, ch);
 			wrefresh(edit);
 		}
@@ -190,11 +190,16 @@ void novo(WINDOW *edit, WINDOW *bar){
 	
 	//Verifica se Deseja salvar o arquivo atual antes de criar um novo;
 	if (count > 0) {  //só pergunta se o arquivo já tiver sido acessado.
+	
 		werase(bar);
 		wrefresh(bar);
+		
 		wprintw(bar, "Deseja salvar e sair do arquivo aberto? (S/N)");
-		echo();
+		
+		echo(); //Volta a exibir os caractéres digitados.
+		curs_set(1); //Exibe o cursor piscando.
 		mvwscanw(bar, 1, 0, "%c", &ch);
+		curs_set(0);
 		noecho();
 		
 		if (ch == 'S') {
@@ -221,9 +226,11 @@ void abrir(WINDOW *edit, WINDOW *bar) {
 	
 	mvwprintw(bar, 0, 0, "Entre com o nome do arquivo que vai abrir:");
 	wrefresh (bar);
-	echo();	
-	wattron(bar, A_BLINK);
+	
+	echo();	//Volta a exibir os caractéres digitados.
+	curs_set(1); //Exibe o cursor piscando.
 	mvwscanw(bar, 1, 0, "%s", nome);
+	curs_set(0);
 	noecho();
 	
 	char ch;
@@ -268,7 +275,7 @@ void salvar(WINDOW *edit, WINDOW *bar) {
 	} else {
 		
 		text = fopen(nome, "w");
-		//Rotina para salvar na memória cada ch que ele recebe.
+		//Rotina para salvar na memória cada ch que ele recebe. (lista);
 		
 	}
 	
@@ -278,9 +285,13 @@ void salvar_como(WINDOW *edit, WINDOW *bar){
 	
 	mvwprintw(bar, 0, 0, "Entre com o nome do novo arquivo");
 	wrefresh (bar);
-	echo();	
+	
+	echo();//Volta a exibir os caractéres digitados.
+	curs_set(1); //Exibe o cursor piscando.	
 	mvwscanw(bar, 1, 0, "%s", nome);
+	curs_set(0);
 	noecho();
+	
 	wclear(bar);
 	salvar(edit,bar);
 
