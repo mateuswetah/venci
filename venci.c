@@ -27,6 +27,9 @@ FILE *text;
 char nome[30]; //Nome do arquivo, fornecido pelo usuário.
 int count = 0; //Registra se é a primeira vez que um documento é aberto.
 
+char content[100000];
+int content_count = 0;
+
 int main() {
 	
 	// Inicia a ncurses
@@ -252,6 +255,7 @@ void abrir(WINDOW *edit, WINDOW *bar) {
 		while ((ch = fgetc(text)) != EOF) {
 					
 			wprintw(edit, "%c", ch);
+            content[content_count++] = ch;
 			
 		}
 		
@@ -276,6 +280,7 @@ void salvar(WINDOW *edit, WINDOW *bar) {
 		
 		text = fopen(nome, "w");
 		//Rotina para salvar na memória cada ch que ele recebe. (lista);
+        fwrite(content, sizeof(content), 1, text);
 		
 	}
 	
