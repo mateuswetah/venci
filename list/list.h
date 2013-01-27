@@ -89,4 +89,33 @@ void linked_list_delete(linked_list_t * list, link_t * link)
     free(link);
 }
 
+/* Traverse */
+void linked_list_traverse(linked_list_t * list, void (*callback) (char))
+{
+    link_t * link;
+    
+    for ( link = list->first; link; link = link->next ) {
+        callback(link->data);
+    }
+}
+
+/* Free list */
+void linked_list_free(linked_list_t * list)
+{
+    link_t * link;
+    link_t * next;
+    
+    for ( link = list->first; link; link = next ) {
+        /* Store the next value so that we don't access freed memory */
+        next = link->next;
+        free(link);
+    }
+}
+
+/* Print list */
+void print_list(char data)
+{
+    printf("%c", data);
+}
+
 #endif
