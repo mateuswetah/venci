@@ -31,16 +31,16 @@ void linked_list_add(linked_list_t * list, char data)
     link_t * link;
     
     /* calloc sets the "next" field to zero. */
-    link = calloc( 1, sizeof(link_t) );
+    link = calloc(1, sizeof(link_t));
     
-    if ( !link ) {
+    if (!link) {
         fprintf(stderr, "calloc failed.\n");
         exit(EXIT_FAILURE);
     }
     
     link->data = data;
     
-    if ( list->last ) {
+    if (list->last) {
         /* Join the two final links together. */
         list->last->next = link;
         link->prev = list->last;
@@ -60,8 +60,8 @@ void linked_list_delete(linked_list_t * list, link_t * link)
     prev = link->prev;
     next = link->next;
     
-    if ( prev ) {
-        if ( next ) {
+    if (prev) {
+        if (next) {
             /* Both the previous and next links are valid, so just
                 bypass "link" without altering "list" at all */
             prev->next = next;
@@ -73,7 +73,7 @@ void linked_list_delete(linked_list_t * list, link_t * link)
             list->last = prev;
         }
     } else {
-        if ( next ) {
+        if (next) {
             /* Only the next link is valid, not the previous one, so
                 "next" is now the first link in "list". */
             next->prev = 0;
@@ -94,7 +94,7 @@ void linked_list_traverse(linked_list_t * list, void (*callback) (char))
 {
     link_t * link;
     
-    for ( link = list->first; link; link = link->next ) {
+    for (link = list->first; link; link = link->next) {
         callback(link->data);
     }
 }
@@ -105,7 +105,7 @@ void linked_list_free(linked_list_t * list)
     link_t * link;
     link_t * next;
     
-    for ( link = list->first; link; link = next ) {
+    for (link = list->first; link; link = next) {
         /* Store the next value so that we don't access freed memory */
         next = link->next;
         free(link);
