@@ -45,7 +45,7 @@ void linked_list_add(linked_list_t * list, char data)
     } else {
         list->first = link;
         list->last = link;
-    }    
+    }
 }
 
 /* Delete */
@@ -139,49 +139,68 @@ void line_linked_list_init(line_linked_list_t * list)
 }
 
 /* Add */
-void line_linked_list_add(line_linked_list_t * list, linked_list_t * head)
+void line_linked_list_add(line_linked_list_t * list, char data)
 {
-    line_link_t * link;
-    
-    /* calloc sets the "next" field tyo zero. */
-    link = calloc(1, sizeof(line_link_t));
-    
-    if (!link) {
+    line_link_t * line_lnk;
+    linked_list_t linked_lst;
+
+    line_lnk = calloc(1, sizeof(line_link_t));
+
+    if (!list) {
         fprintf(stderr, "calloc failed.\n");
         exit(EXIT_FAILURE);
     }
     
-    link->head = head;
-    
     if (list->last) {
-        /* Join the two final links together. */
-        list->last->next = link;
-        link->prev = list->last;
-        list->last = link;
+        if (list->last->head->last->data == '\n') {
+            // Create a new node and put the char
+            
+            printf("%c\n", data);
+            
+            // Create a linked list
+            linked_list_init(&linked_lst);
+            linked_list_add(&linked_lst, data);
+            
+            // Attach the linked list to the line link
+            line_lnk->head = &linked_lst;
+            
+            // Put the line link in the end of the list
+            list->last->next = line_lnk;
+            line_lnk->prev = list->last;
+            list->last = line_lnk;
+        } else {
+            // Append the char in the line
+            linked_list_add(list->last->head, data);
+        }
     } else {
-        list->first = link;
-        list->last = link;
+        // Create linked list
+        linked_list_init(&linked_lst);
+        linked_list_add(&linked_lst, data);
+        
+        // Attach the linked list to the line link
+        line_lnk->head = &linked_lst;
+        
+        // Set the list
+        list->first = line_lnk;
+        list->last = line_lnk;
     }
 }
+
+/* Line linked list traverse */
+void line_linked_list_traverse(line_linked_list_t * list);
 
 /** END OF LINE LINKED LIST **/
 
 int main() {
     
-    line_linked_list_t lines;
-    linked_list_t list;
-
-    line_linked_list_init(&lines);
-    linked_list_init(&list);
+    line_linked_list_t file;
+    line_link_t * line_lnk;
+    link_t * lnk;
+    line_linked_list_init(&file);
     
-    line_linked_list_add(&lines, &list);
+    line_linked_list_add(&file, 'a');
+    line_linked_list_add(&file, '\n');
+    line_linked_list_add(&file, 'b');
     
-    linked_list_add(&list, 'a');
-    linked_list_add(&list, 'l');
-    linked_list_add(&list, 'c');
-    
-    linked_list_traverse(&list, print_list);
-    
-    linked_list_free(&list);
     return 0;
 }
