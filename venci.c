@@ -21,14 +21,12 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit);
 PANEL *popup;
 PANEL *editor;
 PANEL *infobar;
+PANEL *m_ajuda;
 
 // Algumas variáveis globais
 FILE *text;
 char nome[30]; //Nome do arquivo, fornecido pelo usuário.
 int count = 0; //Registra se é a primeira vez que um documento é aberto.
-
-char content[100000];
-int content_count = 0;
 
 int main() {
 	
@@ -42,8 +40,10 @@ int main() {
 	WINDOW *menu;
 	WINDOW *edit;
 	WINDOW *bar;
+	WINDOW *help;
 		
 	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15); //Centralizado!
+	help = newwin(14, 30, (LINES/2)-7, (COLS/2)-15); //Igual ao menu ainda
 	edit = newwin(LINES-2, COLS, 0, 0);
 	bar = newwin(2, COLS, LINES-2, 0);
 	
@@ -51,6 +51,7 @@ int main() {
 	editor = new_panel(edit);
 	infobar = new_panel(bar);
 	popup = new_panel(menu);
+	m_ajuda = new_panel(help);
 
 	// Atributos de cor
 	init_pair(1, COLOR_CYAN, COLOR_BLACK);
@@ -67,7 +68,32 @@ int main() {
 	
 	// Inicializa as variáveis da main e associa valores
 	char ch = 27;	
-	strcpy (nome, "novo_arquivo");
+	strcpy (nome, "novo_arquivo");// Colocar bordas na menu
+	box(menu, 0, '\0');
+	box(help, 0, '\0');	
+	
+	// Inicializa o menu
+	mvwprintw(menu, 0, 12, "VENCI");
+	mvwprintw(menu, 4, 5, "novo");
+	mvwprintw(menu, 5, 5, "abrir");
+	mvwprintw(menu, 6, 5, "salvar");
+	mvwprintw(menu, 7, 5, "salvar como");
+	mvwprintw(menu, 8, 5, "ajuda");
+	mvwprintw(menu, 10, 5, "sair");
+	
+	wrefresh(menu);
+	
+	mvwprintw(help, 1, 2, "Ajuda");
+	mvwprintw(help, 3, 2, "Bem vindo ao VENCI!");
+	mvwprintw(help, 4, 2, "Para acessar o menu,");
+	mvwprintw(help, 5, 2, "basta apertar a tecla ESC.");
+	mvwprintw(help, 6, 2, "Navegue entre as opcoes");
+	mvwprintw(help, 7, 2, "com as setinhas para cima");
+	mvwprintw(help, 8, 2, "e para baixo. Aperte ENTER");
+	mvwprintw(help, 9, 2, "quando tiver escolhido.");
+	mvwprintw(help, 10, 2, "Para voltar a janela de");
+	mvwprintw(help, 11, 2, "edicao, aperte ESC.");
+	
 	
 	// Loop principal
 	while (1) {
@@ -78,6 +104,7 @@ int main() {
 			
 			// Reorganização de painés, da janela e do cursor.
 			hide_panel(popup);
+			hide_panel(m_ajuda);
 			update_panels();
 			doupdate();
 			
@@ -111,20 +138,7 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	
 	int pos = 4;
 	int ch;
-	
-	// Colocar bordas na menu
-	box(menu, 0, '\0');
-	
-	// Imprime o menu
-	mvwprintw(menu, 0, 12, "VENCI");
-	mvwprintw(menu, 4, 5, "novo");
-	mvwprintw(menu, 5, 5, "abrir");
-	mvwprintw(menu, 6, 5, "salvar");
-	mvwprintw(menu, 7, 5, "salvar como");
-	mvwprintw(menu, 8, 5, "ajuda");
-	mvwprintw(menu, 10, 5, "sair");
 	mvwaddch(menu, pos, 3, '>');
-	
 	wrefresh(menu);
 	
 	// Movimentação do cursor e sair do menu
@@ -182,7 +196,7 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 
 	curs_set(1);
 		
-	count++; // Já acessou o menu mais de uma vez, então já acesssou o arquivo.
+	count++; // Já acessou o menu mais de uma vez, então já acessou o arquivo.
 	
 	return 0;
 }
@@ -255,7 +269,6 @@ void abrir(WINDOW *edit, WINDOW *bar) {
 		while ((ch = fgetc(text)) != EOF) {
 					
 			wprintw(edit, "%c", ch);
-            content[content_count++] = ch;
 			
 		}
 		
@@ -280,7 +293,6 @@ void salvar(WINDOW *edit, WINDOW *bar) {
 		
 		text = fopen(nome, "w");
 		//Rotina para salvar na memória cada ch que ele recebe. (lista);
-        fwrite(content, sizeof(content), 1, text);
 		
 	}
 	
@@ -304,46 +316,17 @@ void salvar_como(WINDOW *edit, WINDOW *bar){
 
 void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	
-	int i, j;
-	
-	// Limpa a tela
-	werase(menu);
-	wrefresh(menu);
-	
-	// Imprime a ajuda
-	box(menu, 0, '\0');	
-	
-	for (i = 1; i < 13; i++) {
-		for (j = 1; j < 29; j++) {
-			mvwaddch(menu, i, j, ' ');
-		}
-	}
-	
-	mvwprintw(menu, 1, 2, "Ajuda");
-	mvwprintw(menu, 3, 2, "Bem vindo ao VENCI!");
-	mvwprintw(menu, 4, 2, "Para acessar o menu,");
-	mvwprintw(menu, 5, 2, "basta apertar a tecla ESC.");
-	mvwprintw(menu, 6, 2, "Navegue entre as opcoes");
-	mvwprintw(menu, 7, 2, "com as setinhas para cima");
-	mvwprintw(menu, 8, 2, "e para baixo. Aperte ENTER");
-	mvwprintw(menu, 9, 2, "quando tiver escolhido.");
-	mvwprintw(menu, 10, 2, "Para voltar a janela de");
-	mvwprintw(menu, 11, 2, "edicao, aperte ESC.");
-	
 	// Organiza a barra
-	//werase(bar);
-	//wrefresh(bar);
 	mvwprintw(bar, 1, 0, "Pressione qualquer tecla para voltar ao editor, ou ESC para voltar ao menu.");
 	
 	// Exibe a ajuda
-	wrefresh(bar);
-	wrefresh(menu);
+	show_panel(m_ajuda);
+	update_panels();
+	doupdate();	
 	
 	//getch();
 	if (getch() == 27){ // ESC para voltar ao menu sem passar pela edit
 	
-		werase(menu);
-		wrefresh(menu);
 		werase(bar);
 		wrefresh(bar);
 		
@@ -353,5 +336,3 @@ void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		wrefresh(bar);
 	}
 }
-
-
