@@ -1,7 +1,6 @@
 /**
  * TODO
  * - Tratar o delete
- * - Limpar da memória
  * - Adicionar com x, y
  * - Print com limite
  */
@@ -24,24 +23,24 @@ typedef struct linked_list {
 } linked_list_t;
 
 /* Linked list init */
-void linked_list_init(linked_list_t * list) 
-{    
+void linked_list_init(linked_list_t * list)
+{
     list->first = list->last = 0;
 }
 
 /* Add */
-void linked_list_add(linked_list_t * list, char data) 
+void linked_list_add(linked_list_t * list, char data)
 {
     link_t * link;
-    
+
     /* calloc sets the "next" field to zero. */
     link = calloc(1, sizeof(link_t));
-    
+
     if (!link) {
         fprintf(stderr, "calloc failed.\n");
         exit(EXIT_FAILURE);
     }
-    
+
     link->data = data;
 
     if (list->last) {
@@ -60,10 +59,10 @@ void linked_list_delete(linked_list_t * list, link_t * link)
 {
     link_t * prev;
     link_t * next;
-    
+
     prev = link->prev;
     next = link->next;
-    
+
     if (prev) {
         if (next) {
             /* Both the previous and next links are valid, so just
@@ -89,7 +88,7 @@ void linked_list_delete(linked_list_t * list, link_t * link)
             list->last = 0;
         }
     }
-    
+
     free(link);
 }
 
@@ -97,7 +96,7 @@ void linked_list_delete(linked_list_t * list, link_t * link)
 void linked_list_traverse(linked_list_t * list/*, void (*callback) (char)*/)
 {
     link_t * link;
-    
+
     for (link = list->first; link; link = link->next) {
         printf("%c", link->data);
     }
@@ -108,7 +107,7 @@ void linked_list_free(linked_list_t * list)
 {
     link_t * link;
     link_t * next;
-    
+
     for (link = list->first; link; link = next) {
         /* Store the next value so that we don't access freed memory */
         next = link->next;
@@ -162,7 +161,7 @@ void line_linked_list_add(line_linked_list_t * list, char data)
 
     // Alocating the linked list of chars (linked_lst)
     linked_lst = calloc(1, sizeof(link_t));
-    
+
     // Initiating an empty linked list
     linked_lst->first = linked_lst->last = 0;
 
@@ -174,15 +173,14 @@ void line_linked_list_add(line_linked_list_t * list, char data)
 
     // Check if list is not empty
     if (list->last) {
+        // Create a new node and put the char and
         if (list->last->head->last->data == '\n') {
-            // Create a new node and put the char
-            
             // Create a linked list
             linked_list_add(linked_lst, data);
-            
+
             // Attach the linked list to the line link
             line_lnk->head = linked_lst;
-            
+
             // Put the line link in the end of the list
             list->last->next = line_lnk;
             line_lnk->prev = list->last;
@@ -195,10 +193,10 @@ void line_linked_list_add(line_linked_list_t * list, char data)
         // Create linked list
         linked_list_init(linked_lst);
         linked_list_add(linked_lst, data);
-        
+
         // Attach the linked list to the line link
         line_lnk->head = linked_lst;
-        
+
         // Set the list
         list->first = line_lnk;
         list->last = line_lnk;
@@ -210,7 +208,7 @@ void line_linked_list_free(line_linked_list_t * list)
 {
     line_link_t * link;
     line_link_t * next;
-    
+
     for (link = list->first; link; link = next) {
         /* Store the next value so that we don't access freed memory */
         next = link->next;
@@ -222,7 +220,7 @@ void line_linked_list_free(line_linked_list_t * list)
 /** END OF LINE LINKED LIST **/
 
 int main() {
-    
+
     line_linked_list_t file;
     line_link_t * line_lnk;
     link_t * lnk;
@@ -236,7 +234,7 @@ int main() {
     for (line_lnk = file.first; line_lnk; line_lnk = line_lnk->next) {
         linked_list_traverse(line_lnk->head);
     }
-    
+
     line_linked_list_free(&file);    
     return 0;
 }
