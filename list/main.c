@@ -87,12 +87,12 @@ void linked_list_delete(linked_list_t * list, link_t * link)
 }
 
 /* Traverse */
-void linked_list_traverse(linked_list_t * list, void (*callback) (char))
+void linked_list_traverse(linked_list_t * list/*, void (*callback) (char)*/)
 {
     link_t * link;
     
     for (link = list->first; link; link = link->next) {
-        callback(link->data);
+        printf("%c", link->data);
     }
 }
 
@@ -142,25 +142,39 @@ void line_linked_list_init(line_linked_list_t * list)
 void line_linked_list_add(line_linked_list_t * list, char data)
 {
     line_link_t * line_lnk;
-    linked_list_t linked_lst;
+    linked_list_t * linked_lst;
 
+    // Allocating the new line node (line_lnk)
     line_lnk = calloc(1, sizeof(line_link_t));
 
+    // Check if there is sufficient memory
     if (!list) {
-        fprintf(stderr, "calloc failed.\n");
+        fprintf(stderr, "calloc of line link failed.\n");
         exit(EXIT_FAILURE);
     }
+
+    // Alocating the linked list of chars (linked_lst)
+    linked_lst = calloc(1, sizeof(link_t));
     
+    // Initiating an empty linked list
+    linked_lst->first = linked_lst->last = 0;
+
+    // Check if there is sufficient memory
+    if (!linked_lst) {
+        fprintf(stderr, "calloc of line link failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Check if list is not empty
     if (list->last) {
         if (list->last->head->last->data == '\n') {
             // Create a new node and put the char
             
             // Create a linked list
-            linked_list_init(&linked_lst);
-            linked_list_add(&linked_lst, data);
+            linked_list_add(linked_lst, data);
             
             // Attach the linked list to the line link
-            line_lnk->head = &linked_lst;
+            line_lnk->head = linked_lst;
             
             // Put the line link in the end of the list
             list->last->next = line_lnk;
@@ -172,11 +186,11 @@ void line_linked_list_add(line_linked_list_t * list, char data)
         }
     } else {
         // Create linked list
-        linked_list_init(&linked_lst);
-        linked_list_add(&linked_lst, data);
+        linked_list_init(linked_lst);
+        linked_list_add(linked_lst, data);
         
         // Attach the linked list to the line link
-        line_lnk->head = &linked_lst;
+        line_lnk->head = linked_lst;
         
         // Set the list
         list->first = line_lnk;
@@ -195,10 +209,15 @@ int main() {
     line_link_t * line_lnk;
     link_t * lnk;
     line_linked_list_init(&file);
-    
-    line_linked_list_add(&file, '\n');
+
     line_linked_list_add(&file, 'a');
     line_linked_list_add(&file, 'b');
+    line_linked_list_add(&file, '\n');
+    line_linked_list_add(&file, 'c');    
+
+    for (line_lnk = file.first; line_lnk; line_lnk = line_lnk->next) {
+        linked_list_traverse(line_lnk->head);
+    }
     
     return 0;
 }
