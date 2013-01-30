@@ -1,6 +1,9 @@
 /**
  * TODO
- * 
+ * - Tratar o delete
+ * - Limpar da memória
+ * - Adicionar com x, y
+ * - Print com limite
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -202,8 +205,19 @@ void line_linked_list_add(line_linked_list_t * list, char data)
     }
 }
 
-/* Line linked list traverse */
-void line_linked_list_traverse(line_linked_list_t * list);
+/* Line linked list free */
+void line_linked_list_free(line_linked_list_t * list)
+{
+    line_link_t * link;
+    line_link_t * next;
+    
+    for (link = list->first; link; link = next) {
+        /* Store the next value so that we don't access freed memory */
+        next = link->next;
+        linked_list_free(link->head);
+        free(link);
+    }    
+}
 
 /** END OF LINE LINKED LIST **/
 
@@ -223,5 +237,6 @@ int main() {
         linked_list_traverse(line_lnk->head);
     }
     
+    line_linked_list_free(&file);    
     return 0;
 }
