@@ -36,7 +36,7 @@ void linked_list_add(linked_list_t * list, char data)
     }
     
     link->data = data;
-    
+
     if (list->last) {
         /* Join the two final links together. */
         list->last->next = link;
@@ -155,8 +155,6 @@ void line_linked_list_add(line_linked_list_t * list, char data)
         if (list->last->head->last->data == '\n') {
             // Create a new node and put the char
             
-            printf("%c\n", data);
-            
             // Create a linked list
             linked_list_init(&linked_lst);
             linked_list_add(&linked_lst, data);
@@ -198,8 +196,8 @@ int main() {
     link_t * lnk;
     line_linked_list_init(&file);
     
-    line_linked_list_add(&file, 'a');
     line_linked_list_add(&file, '\n');
+    line_linked_list_add(&file, 'a');
     line_linked_list_add(&file, 'b');
     
     return 0;
