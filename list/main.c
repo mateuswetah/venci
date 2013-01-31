@@ -16,24 +16,24 @@ struct link {
     link_t * next;
 };
 
-/* Linked list */
+/* Lista encadeada */
 typedef struct linked_list {
     link_t * first;
     link_t * last;
 } linked_list_t;
 
-/* Linked list init */
+/* Inicialização da lista encadeada */
 void linked_list_init(linked_list_t * list)
 {
     list->first = list->last = 0;
 }
 
-/* Add */
+/* Adicionar */
 void linked_list_add(linked_list_t * list, char data)
 {
     link_t * link;
 
-    /* calloc sets the "next" field to zero. */
+    /* calloc() já define o próximo (next) como zero. */
     link = calloc(1, sizeof(link_t));
 
     if (!link) {
@@ -44,7 +44,7 @@ void linked_list_add(linked_list_t * list, char data)
     link->data = data;
 
     if (list->last) {
-        /* Join the two final links together. */
+        /* Juntar os dois links do final. */
         list->last->next = link;
         link->prev = list->last;
         list->last = link;
@@ -54,7 +54,7 @@ void linked_list_add(linked_list_t * list, char data)
     }
 }
 
-/* Delete */
+/* Remover */
 void linked_list_delete(linked_list_t * list, link_t * link)
 {
     link_t * prev;
@@ -65,25 +65,25 @@ void linked_list_delete(linked_list_t * list, link_t * link)
 
     if (prev) {
         if (next) {
-            /* Both the previous and next links are valid, so just
-                bypass "link" without altering "list" at all */
+            /* Ambos os links anteriores e próximos são válidos, então apenas
+                passar pelo "link" sem alterar a lista. */
             prev->next = next;
             next->prev = prev;
         } else {
-            /* Only the previous link is valid, so "prev" is now the
-                last link in the "list". */
+            /* Somente o link anterior é válido, então "prev" (elemento anterior), 
+                é agora o último link na lista */
             prev->next = 0;
             list->last = prev;
         }
     } else {
         if (next) {
-            /* Only the next link is valid, not the previous one, so
-                "next" is now the first link in "list". */
+            /* Somente o próximo link é válido, não o anterior, então o próximo
+                é agora o primeiro link na lista. */
             next->prev = 0;
             list->first = next;
         } else {
-            /* Neither previous nor next links are valid, so the list
-                is now empty. */
+            /* Nem o anterior nem o próximo são links válidos, então a lista está
+                vazia agora. */
             list->first = 0;
             list->last = 0;
         }
@@ -92,7 +92,7 @@ void linked_list_delete(linked_list_t * list, link_t * link)
     free(link);
 }
 
-/* Traverse */
+/* Atravessar */
 void linked_list_traverse(linked_list_t * list/*, void (*callback) (char)*/)
 {
     link_t * link;
@@ -102,26 +102,26 @@ void linked_list_traverse(linked_list_t * list/*, void (*callback) (char)*/)
     }
 }
 
-/* Free list */
+/* Limpar a lista (free) */
 void linked_list_free(linked_list_t * list)
 {
     link_t * link;
     link_t * next;
 
     for (link = list->first; link; link = next) {
-        /* Store the next value so that we don't access freed memory */
+        /* Guardar o próximo valor para não acessarmos memória que já foi limpa. */
         next = link->next;
         free(link);
     }
 }
 
-/* Print list */
+/* Imprimir a lista */
 void print_list(char data)
 {
     printf("%c", data);
 }
 
-/** LINE LINKED LIST **/
+/** LINHA: LISTA ENCADEADA **/
 
 /* Link */
 typedef struct line_link line_link_t;
@@ -132,92 +132,92 @@ struct line_link {
     line_link_t * next;
 };
 
-/* Linked list */
+/* Lista encadeada */
 typedef struct line_linked_list {
     line_link_t * first;
     line_link_t * last;
 } line_linked_list_t;
 
-/* Linked list init */
+/* Inicialização da lista encadeada */
 void line_linked_list_init(line_linked_list_t * list)
 {
     list->first = list->last = 0;
 }
 
-/* Add */
+/* Adicionar */
 void line_linked_list_add(line_linked_list_t * list, char data)
 {
     line_link_t * line_lnk;
     linked_list_t * linked_lst;
 
-    // Allocating the new line node (line_lnk)
+    // Alocação do novo nó (line_lnk)
     line_lnk = calloc(1, sizeof(line_link_t));
 
-    // Check if there is sufficient memory
-    if (!list) {
+    // Verificar se line_lnk foi alocado
+    if (!line_lnk) {
         fprintf(stderr, "calloc of line link failed.\n");
         exit(EXIT_FAILURE);
     }
 
-    // Alocating the linked list of chars (linked_lst)
+    // Alocação da lista encadeada de caracteres
     linked_lst = calloc(1, sizeof(link_t));
 
-    // Initiating an empty linked list
+    // Inicializando a lista encadeada
     linked_lst->first = linked_lst->last = 0;
 
-    // Check if there is sufficient memory
+    // Verificar se a linked_lst foi alocado
     if (!linked_lst) {
         fprintf(stderr, "calloc of line link failed.\n");
         exit(EXIT_FAILURE);
     }
 
-    // Check if list is not empty
+    // Verificar se a lista não está vazia
     if (list->last) {
-        // Create a new node and put the char and
+        // Criar um novo nó e colocar o caractere
         if (list->last->head->last->data == '\n') {
-            // Create a linked list
+            // Criar a lista encadeada
             linked_list_add(linked_lst, data);
 
-            // Attach the linked list to the line link
+            // Juntar a lista encadeada ao link da linha
             line_lnk->head = linked_lst;
 
-            // Put the line link in the end of the list
+            // Colocar o link da linha no fim da lista
             list->last->next = line_lnk;
             line_lnk->prev = list->last;
             list->last = line_lnk;
         } else {
-            // Append the char in the line
+            // Colocar o caractere na linha
             linked_list_add(list->last->head, data);
         }
     } else {
-        // Create linked list
+        // Criar a lista encadeada
         linked_list_init(linked_lst);
         linked_list_add(linked_lst, data);
 
-        // Attach the linked list to the line link
+        // Juntar a lista encadeada no link da linha
         line_lnk->head = linked_lst;
 
-        // Set the list
+        // Iniciar a lista
         list->first = line_lnk;
         list->last = line_lnk;
     }
 }
 
-/* Line linked list free */
+/* Desalocara a lista encadeada de linha. */
 void line_linked_list_free(line_linked_list_t * list)
 {
     line_link_t * link;
     line_link_t * next;
 
     for (link = list->first; link; link = next) {
-        /* Store the next value so that we don't access freed memory */
+        /* Guardar o próximo valor para não acessarmos memória que já foi limpa. */
         next = link->next;
         linked_list_free(link->head);
         free(link);
     }    
 }
 
-/** END OF LINE LINKED LIST **/
+/** FIM DA LISTA ENCADEADA DE LINHAS **/
 
 int main() {
 
