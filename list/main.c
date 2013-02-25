@@ -1,7 +1,5 @@
 /**
  * TODO
- * - Tratar o delete
- * - Adicionar com x, y
  * - Print com limite
  */
 #include <stdio.h>
@@ -203,7 +201,7 @@ void line_linked_list_add(line_linked_list_t * list, char data)
     }
 }
 
-/* Desalocara a lista encadeada de linha. */
+/* Desalocar a lista encadeada de linha. */
 void line_linked_list_free(line_linked_list_t * list)
 {
     line_link_t * link;
@@ -259,6 +257,78 @@ void list_save_to_file(line_linked_list_t * list, char * file_name)
 
 /** FIM OPERACOES COM ARQUIVO **/
 
+int list_size(line_linked_list_t * list)
+{
+    line_link_t * line_lnk = list->first;;
+    int size = 0;
+
+    while (line_lnk) {
+        size++;
+        line_lnk = line_lnk->next;
+    }
+    
+    return size;
+}
+
+void add_xy(line_linked_list_t * list, int x, int y, char data)
+{
+    int i, j;
+    line_link_t * line_lnk = list->first;
+    link_t * lnk, * new_lnk;
+    
+    line_link_t * new_line_lnk;
+    linked_list_t * new_linked_list;
+    linked_list_init(new_linked_list);
+    
+    // Percorrer o eixo X (linhas)
+    for (i = 1; i < x; i++) {
+        line_lnk = line_lnk->next;
+    }
+    
+    // Percorrer o eixo Y (colunas)
+    lnk = line_lnk->head->first;
+    for (j = 1; j < y; j++) {
+        lnk = lnk->next;
+    }
+    
+    // Tratar o BACKSPACE
+    if (data == 10) {
+        linked_list_delete(line_lnk->head, lnk);
+    } else {
+        // O elemento não é o último
+        if (lnk->next) {
+            // Quebrar a linha e criar uma nova caso seja \n
+            if (data == '\n') {
+                new_linked_list->first = lnk;
+                new_linked_list->last = line_lnk->head->last;
+            
+                lnk->prev->next = 0;
+                line_lnk->head->last = lnk->prev;
+                linked_list_add(line_lnk->head, '\n');
+            
+                new_line_lnk = calloc(1, sizeof(line_link_t));
+                new_line_lnk->head = new_linked_list;
+
+                line_lnk->next = new_line_lnk;
+                new_line_lnk->prev = line_lnk;
+                new_line_lnk->next = 0;
+
+                list->last = new_line_lnk;
+            } else {
+                new_lnk = calloc(1, sizeof(link_t));
+                new_lnk->data = data;
+                
+                lnk->next->prev = new_lnk;
+                new_lnk->next = lnk->next;
+                new_lnk->prev = lnk;
+                lnk->next = new_lnk;
+            }
+        } else { // É o útimo elemento
+            linked_list_add(line_lnk->head, data);
+        }
+    }
+}
+
 int main()
 {
     line_linked_list_t file;
@@ -273,6 +343,8 @@ int main()
     }
     
     list_save_to_file(&file, "save.txt");
+
+    printf("\n%d\n", list_size(&file));
 
     line_linked_list_free(&file);    
     return 0;
