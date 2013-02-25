@@ -219,21 +219,60 @@ void line_linked_list_free(line_linked_list_t * list)
 
 /** FIM DA LISTA ENCADEADA DE LINHAS **/
 
-int main() {
+/** OPERACOES COM ARQUIVO **/
 
+/* Carregar arquivo para a lista */
+void list_load_from_file(char * file_name, line_linked_list_t * list)
+{
+    FILE * fp = fopen(file_name, "r");
+    char ch;
+    
+    // Verificar se o arquivo existe.
+    if (fp != NULL) {
+        // Varrer todo o arquivo e colocar cada elemento na lista.
+        while ((ch = fgetc(fp)) != EOF) {
+            line_linked_list_add(list, ch);
+        }
+    }
+    
+    fclose(fp);
+}
+
+/* Salvar lista em arquivo */
+void list_save_to_file(line_linked_list_t * list, char * file_name)
+{
+    FILE * fp = fopen(file_name, "w");
+    line_link_t * line_lnk;
+    link_t * link;
+
+    // Percorrer as linhas
+    for (line_lnk = list->first; line_lnk; line_lnk = line_lnk->next) {
+        // Percorrer as colunas
+        for (link = line_lnk->head->first; link; link = link->next) {
+            // Savlar em arquivo
+            fputc(link->data, fp);
+        }
+    }
+    
+    fclose(fp);
+}
+
+/** FIM OPERACOES COM ARQUIVO **/
+
+int main()
+{
     line_linked_list_t file;
     line_link_t * line_lnk;
     link_t * lnk;
     line_linked_list_init(&file);
-
-    line_linked_list_add(&file, 'a');
-    line_linked_list_add(&file, 'b');
-    line_linked_list_add(&file, '\n');
-    line_linked_list_add(&file, 'c');    
-
+    
+    list_load_from_file("teste.txt", &file);
+    
     for (line_lnk = file.first; line_lnk; line_lnk = line_lnk->next) {
         linked_list_traverse(line_lnk->head);
     }
+    
+    list_save_to_file(&file, "save.txt");
 
     line_linked_list_free(&file);    
     return 0;
