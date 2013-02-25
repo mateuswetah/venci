@@ -15,7 +15,7 @@ void salvar(WINDOW *edit, WINDOW *bar);
 void abrir(WINDOW *edit, WINDOW *bar);
 void salvar_como(WINDOW *edit, WINDOW *bar);
 void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit);
-int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit);
+void show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit);
 
 // Cria os painéis
 PANEL *popup;
@@ -27,6 +27,7 @@ PANEL *m_ajuda;
 FILE *text;
 char nome[30]; //Nome do arquivo, fornecido pelo usuário.
 int count = 0; //Registra se é a primeira vez que um documento é aberto.
+int sair = 0;
 
 int main() {
 	
@@ -43,10 +44,10 @@ int main() {
 	WINDOW *help;
 		
 	menu = newwin(14, 30, (LINES/2)-7, (COLS/2)-15); //Centralizado!
-	help = newwin(14, 30, (LINES/2)-7, (COLS/2)-15); //Igual ao menu ainda
 	edit = newwin(LINES-2, COLS, 0, 0);
 	bar = newwin(2, COLS, LINES-2, 0);
-	
+	help = newwin(16, 30, (LINES/2)-8, (COLS/2)-15); //Maior que o menu.
+		
 	// Associa os painéis às suas respectivas janelas
 	editor = new_panel(edit);
 	infobar = new_panel(bar);
@@ -58,6 +59,7 @@ int main() {
 	
 	wattrset(bar, COLOR_PAIR(1));
 	wattrset(menu, COLOR_PAIR(1));
+	wattrset(help, COLOR_PAIR(1));
 	
 	// Habilita teclas especiais
 	keypad(stdscr, TRUE);
@@ -92,13 +94,19 @@ int main() {
 	mvwprintw(help, 8, 2, "e para baixo. Aperte ENTER");
 	mvwprintw(help, 9, 2, "quando tiver escolhido.");
 	mvwprintw(help, 10, 2, "Para voltar a janela de");
-	mvwprintw(help, 11, 2, "edicao, aperte ESC.");
+	mvwprintw(help, 11, 2, "edicao, aperte ESC. Voce");
+	mvwprintw(help, 12, 2, "pode navegar entre os");
+	mvwprintw(help, 13, 2, "caracteres usando as setas");
+	mvwprintw(help, 14, 2, "para cima, baixo e lados.");
 	
 	
 	// Loop principal
 	while (1) {
 		if (ch == 27) { //ESC para exibir o menu
-			if(show_menu(menu, bar, edit) == 1){
+		
+			show_menu(menu, bar, edit);
+			
+			if(sair == 1){
 				break;
 			}
 			
@@ -122,13 +130,15 @@ int main() {
 	}
 
 	endwin();
-		 
+	 
 	return 0;
 }
 
-int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
+void show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 	
 	//Ajusta o painel
+	
+	hide_panel(m_ajuda);
 	show_panel(popup);
 	update_panels();
 	doupdate();	
@@ -165,7 +175,7 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		}else if (ch == 10){ // ENTER para escolher opção
 			break;
 		}else if (ch == 27){ // ESC para sair do menu sem selecionar
-			return 0;
+			return;
 		}
 		
 		mvwaddch(menu, pos, 3, '>');
@@ -189,7 +199,7 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		case 8: ajuda(menu, bar,edit);
 			break;
 		case 10:
-			return 1;
+			sair = 1;
 			break;
 	}
 	wrefresh(bar);
@@ -198,7 +208,7 @@ int show_menu(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		
 	count++; // Já acessou o menu mais de uma vez, então já acessou o arquivo.
 	
-	return 0;
+	return;
 }
 
 void novo(WINDOW *edit, WINDOW *bar){
@@ -249,6 +259,8 @@ void abrir(WINDOW *edit, WINDOW *bar) {
 	mvwscanw(bar, 1, 0, "%s", nome);
 	curs_set(0);
 	noecho();
+	werase(edit);
+	wrefresh(edit);
 	
 	char ch;
 	
@@ -293,6 +305,7 @@ void salvar(WINDOW *edit, WINDOW *bar) {
 		
 		text = fopen(nome, "w");
 		//Rotina para salvar na memória cada ch que ele recebe. (lista);
+		fclose(text);
 		
 	}
 	
@@ -300,12 +313,22 @@ void salvar(WINDOW *edit, WINDOW *bar) {
 	
 void salvar_como(WINDOW *edit, WINDOW *bar){
 	
+	char n[30];
+	int i = -1;
 	mvwprintw(bar, 0, 0, "Entre com o nome do novo arquivo");
 	wrefresh (bar);
-	
 	echo();//Volta a exibir os caractéres digitados.
 	curs_set(1); //Exibe o cursor piscando.	
-	mvwscanw(bar, 1, 0, "%s", nome);
+	
+	wmove(bar, 4, 0);
+	
+	while((n[++i] = getch()) !=  '\n'){
+		if(n[i] == 27){
+			return;
+		}
+	}
+	n[i] = '\0';
+	strcpy(nome, n);
 	curs_set(0);
 	noecho();
 	
@@ -335,4 +358,9 @@ void ajuda(WINDOW *menu, WINDOW *bar, WINDOW *edit) {
 		werase(bar);
 		wrefresh(bar);
 	}
+	
+	hide_panel(m_ajuda);
+	update_panels();
+	doupdate();
+	
 }
