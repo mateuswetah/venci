@@ -293,7 +293,7 @@ void add_xy(line_linked_list_t * list, int x, int y, char data)
     
     // Tratar o BACKSPACE
     if (data == 10) {
-        linked_list_delete(line_lnk->head, lnk);
+        linked_list_delete(line_lnk->head, lnk->prev);
     } else {
         // O elemento não é o último
         if (lnk->next) {
