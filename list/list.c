@@ -351,7 +351,6 @@ void list_add_xy(line_linked_list_t * list, int x, int y, char data)
                     for (j = 0; j < y; j++) {
                         tmp_lnk = tmp_lnk->next;
                     }
-                printf("%c\n", tmp_lnk->data);
                 
                 // Ligar o novo no na posicao (x, y)
                 new_lnk->next = tmp_lnk;
